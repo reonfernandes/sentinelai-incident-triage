@@ -1,1 +1,7 @@
-spring.application.name=sentinel-core-service
+spring:
+    application:
+        name: sentinel-core-service
+    config:
+        import: optional:file:../.env[.properties]
+    profiles:
+        active: ${SPRING_ACTIVE_PROFILE:dev}
