@@ -41,4 +41,9 @@ public class CacheServiceImpl implements CacheService {
     public String getCachedKey(String hash) {
         return redisTemplate.opsForValue().get(keyFor(hash));
     }
+
+    @Override
+    public void evictCache(String hash) {
+        redisTemplate.delete(keyFor(hash));
+    }
 }

@@ -1,7 +1,9 @@
 package com.reon.sentinelcoreservice.consumer;
 
+import com.reon.dto.AiDiagnosis;
 import com.reon.dto.RawLogEvent;
 import com.reon.sentinelcoreservice.mapper.HashMapper;
+import com.reon.sentinelcoreservice.service.AiTriageService;
 import com.reon.sentinelcoreservice.service.CacheService;
 import com.reon.sentinelcoreservice.service.HashService;
 import lombok.extern.slf4j.Slf4j;
@@ -14,11 +16,14 @@ public class IngestConsumer {
 
     private final HashService hashService;
     private final CacheService cacheService;
+    private final AiTriageService aiTriageService;
     private final HashMapper hashMapper;
 
-    public IngestConsumer(HashService hashService, CacheService cacheService, HashMapper hashMapper) {
+    public IngestConsumer(HashService hashService, CacheService cacheService, AiTriageService aiTriageService,
+                          HashMapper hashMapper) {
         this.hashService = hashService;
         this.cacheService = cacheService;
+        this.aiTriageService = aiTriageService;
         this.hashMapper = hashMapper;
     }
 
@@ -31,7 +36,13 @@ public class IngestConsumer {
         String hash = hashService.generateEventHash(hashMapper.mapRawEventToHashInput(event));
 
         if (cacheService.markIfNew(hash)) {
-            log.info("New error {}, send to AI later", hash);
+            try {
+                AiDiagnosis diagnose = aiTriageService.diagnose(event);
+                log.info("AI diagnosis for {}: {}", hash, diagnose);
+            } catch (Exception exception) {
+                log.error("AI diagnosis failed for {}, releasing fingerprint", hash, exception);
+                cacheService.evictCache(hash);
+            }
         } else {
             log.info("Redis cache hit {}, skipping", hash);
         }
