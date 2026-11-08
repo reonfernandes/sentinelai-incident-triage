@@ -183,9 +183,9 @@ sentinelai/
 ## Roadmap
 
 - [x] Project design
-- [ ] Log ingestion through Kafka
-- [ ] Redis deduplication
-- [ ] AI diagnosis with Spring AI
+- [x] Log ingestion through Kafka
+- [x] Redis deduplication
+- [x] AI diagnosis with Spring AI
 - [ ] Incident storage in PostgreSQL
 - [ ] RabbitMQ priority queues and retry logic
 - [ ] Similar-incident search with pgvector
