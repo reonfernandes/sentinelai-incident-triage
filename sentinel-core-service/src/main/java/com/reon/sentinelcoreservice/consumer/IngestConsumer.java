@@ -6,6 +6,7 @@ import com.reon.sentinelcoreservice.mapper.HashMapper;
 import com.reon.sentinelcoreservice.service.AiTriageService;
 import com.reon.sentinelcoreservice.service.CacheService;
 import com.reon.sentinelcoreservice.service.HashService;
+import com.reon.sentinelcoreservice.service.IncidentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -17,13 +18,16 @@ public class IngestConsumer {
     private final HashService hashService;
     private final CacheService cacheService;
     private final AiTriageService aiTriageService;
+    private final IncidentService incidentService;
     private final HashMapper hashMapper;
 
     public IngestConsumer(HashService hashService, CacheService cacheService, AiTriageService aiTriageService,
+                          IncidentService incidentService,
                           HashMapper hashMapper) {
         this.hashService = hashService;
         this.cacheService = cacheService;
         this.aiTriageService = aiTriageService;
+        this.incidentService = incidentService;
         this.hashMapper = hashMapper;
     }
 
@@ -39,6 +43,7 @@ public class IngestConsumer {
             try {
                 AiDiagnosis diagnose = aiTriageService.diagnose(event);
                 log.info("AI diagnosis for {}: {}", hash, diagnose);
+                incidentService.saveNewIncident(event, diagnose, hash);
             } catch (Exception exception) {
                 log.error("AI diagnosis failed for {}, releasing fingerprint", hash, exception);
                 cacheService.evictCache(hash);

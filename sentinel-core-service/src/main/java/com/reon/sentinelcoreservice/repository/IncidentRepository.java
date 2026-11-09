@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface IncidentRepository extends JpaRepository<Incident, String> {
-    Optional<Incident> findByTenantIdAndFingerPrint(String tenantId, String fingerPrint);
+    Optional<Incident> findByTenantIdAndFingerprint(String tenantId, String fingerprint);
 }

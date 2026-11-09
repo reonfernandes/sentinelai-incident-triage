@@ -16,7 +16,7 @@ import java.time.Instant;
         name = "incidents",
         uniqueConstraints = @UniqueConstraint(
                 name = "unq_tenant_fingerprint",
-                columnNames = {"tenant_id", "finger_print"}
+                columnNames = {"tenant_id", "fingerprint"}
         )
 )
 public class Incident {
@@ -31,8 +31,8 @@ public class Incident {
     @Column(nullable = false)
     private String service;
 
-    @Column(name = "finger_print", nullable = false, updatable = false)
-    private String fingerPrint;
+    @Column(name = "fingerprint", nullable = false, updatable = false)
+    private String fingerprint;
 
     @Column(name = "exception_type", nullable = false)
     private String exceptionType;
