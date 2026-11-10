@@ -6,4 +6,5 @@ import com.reon.sentinelcoreservice.dto.response.IncidentResponse;
 
 public interface IncidentService {
     IncidentResponse saveNewIncident(RawLogEvent logEvent, AiDiagnosis diagnosis, String fingerprint);
+    boolean recordRepeat(String tenantId, String fingerprint);
 }

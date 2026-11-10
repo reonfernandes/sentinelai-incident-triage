@@ -9,6 +9,7 @@ import com.reon.sentinelcoreservice.repository.IncidentRepository;
 import com.reon.sentinelcoreservice.service.IncidentService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -39,5 +40,12 @@ public class IncidentServiceImpl implements IncidentService {
 
         log.info("New incident saved successfully...");
         return incidentMapper.responseToUser(incident);
+    }
+
+    @Override
+    @Transactional
+    public boolean recordRepeat(String tenantId, String fingerprint) {
+        int updated = incidentRepository.incrementOccurrence(tenantId, fingerprint, Instant.now(clock));
+        return updated > 0;
     }
 }
