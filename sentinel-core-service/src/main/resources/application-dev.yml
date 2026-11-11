@@ -52,3 +52,5 @@ app:
             ingest: sentinel-ingest-topic
     redis:
         hash-ttl: 10m
+    frontend:
+        url: http://localhost:5173
